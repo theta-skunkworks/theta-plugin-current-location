@@ -5,7 +5,9 @@ Version: 1.0.0
 # 1. Overview
 
 This plugin uses "[osmdroid](https://github.com/osmdroid/osmdroid)" to display your location in the map data provided by "[Open Street Map](https://www.openstreetmap.org/copyright/)".
+
 You can display a map of any point by dragging the screen.
+
 You can adjust the zoom level by operating the "+" and "-" buttons displayed by tapping the screen.
 
 If the current location is unfollowed by the above screen operation, you can return to the state of following the current location again by pressing the shutter button.
