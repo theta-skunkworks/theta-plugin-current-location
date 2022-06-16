@@ -11,7 +11,7 @@ You can display a map of any point by dragging the screen.
 You can adjust the zoom level by operating the "+" and "-" buttons displayed by tapping the screen.
 
 If the current location is unfollowed by the above screen operation, you can return to the state of following the current location again by pressing the shutter button.
-However, the display position does not change in places where radio waves from GNSS (Global Positioning Satellite System) cannot be received, such as indoors. Please be careful.
+However, the display position does not change in places where radio waves from GNSS (Global Navigation Satellite System) cannot be received, such as indoors. Please be careful.
 
 
 When used offline, you can use a map of the range and zoom level that you have seen while online in the past.
