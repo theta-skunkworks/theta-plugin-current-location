@@ -30,7 +30,7 @@ Copyright &copy; 2022 Ricoh Company, Ltd.
 # 3. Development Environment
 
 * RICOH THETA X 
-* Firmware version 1.10.1 later
+* Firmware version 1.10.1 or later
 
 
 # 4. Install
