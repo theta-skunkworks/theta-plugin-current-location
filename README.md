@@ -81,7 +81,7 @@ The calling method is based on [the calling method of the map application descri
 
 Format: `geo:[lat,lng][?param...]`
 
-`lat, lng`: Latitude and longitude including the decimal point. When using "q = lat, lng", it can be set to "0,0" or omitted.
+`lat, lng`: Latitude and longitude including the decimal point.<br>When using "q = lat, lng", it can be set to "0,0" or omitted.
 
 `param`:
  - `q = lat, lng`: Displays the map with a pin at the specified position.
@@ -91,7 +91,7 @@ Format: `geo:[lat,lng][?param...]`
 
 ## How to call the map plugin
 
-THETA Plug-in is prohibited from operating in the background by the Plug-in Policy (https://api.ricoh/docs/theta-plugin/policy/). <br>To comply with this policy, define an onStop () method where you can call the map plugin.
+THETA Plug-in is prohibited from operating in the background by the [Plug-in Policy](https://api.ricoh/docs/theta-plugin/policy/). <br>To comply with this policy, define an onStop () method where you can call the map plugin.
 
 ``` MainActivity.java
     @Override
