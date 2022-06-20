@@ -1,6 +1,6 @@
 # Current location
 
-Version: 1.0.0
+Version: 1.0.1
 
 # 1. Overview
 
@@ -71,7 +71,61 @@ The Japanese model has the following points to note.
 - If you use your own package name, you cannot start the plug-in from the plug-in start menu when the wireless LAN status is CL mode (Client mode). Display "settings" with the adb command described in the previous chapter, and start the target plug-in from "settings".
 
 
-# 6. History
+# 6. Calls from other plugins with implicit intents.
+
+This plugin can be called from other plugins by using implicit intent.<br>
+The calling method is based on [the calling method of the map application described in the Google document](https://developer.android.com/guide/components/intents-common#Maps), but there are some differences.<br>It is shown below.
+
+
+## Supported geo URI formats
+
+Format: `geo:[lat,lng][?param...]`
+
+`lat, lng`: Latitude and longitude including the decimal point. When using "q = lat, lng", it can be set to "0,0" or omitted.
+
+`param`:
+ - `q = lat, lng`: Displays the map with a pin at the specified position.
+ - `z = zoom`: You can specify the zoom level. It can be omitted.
+ - `package = packageName`: If you specify the caller's package name, you can return to the caller's MainActivity after exiting the map plugin. It can be omitted.
+
+
+## How to call the map plugin
+
+THETA Plug-in is prohibited from operating in the background by the Plug-in Policy (https://api.ricoh/docs/theta-plugin/policy/). <br>To comply with this policy, define an onStop () method where you can call the map plugin.
+
+``` MainActivity.java
+    @Override
+    protected void onStop() {
+
+        if (bootMapEna) {
+
+            String retPackageName = this.getPackageName() ;
+            String uri = String.format("geo:q=%06f,%06f?z=%01f?package=%s", lat,lng,zoom,retPackageName);
+            Intent intent =  new Intent( Intent.ACTION_VIEW );
+            intent.setData( Uri.parse(uri) );
+            if ( intent.resolveActivity(getPackageManager()) != null ) {
+                startActivity(intent);
+            }
+
+        }
+
+        super.onStop();
+    }
+
+```
+
+If you call the map plugin during normal processing, the caller's onPause () will be executed and the plugin will be terminated. The map plugin will not start either.
+
+
+## Differences in behavior when launched with an implicit intent
+
+- Force the wireless LAN to CL mode (Client mode). It will remain in that state even if you exit the plug-in.
+- Even if you move the map, you can return to the specified position by pressing the shutter button.
+- Does not save display position and zoom level when exiting.
+
+
+# 7. History
+* ver.1.0.1 (2022/06/20): Added support for implicit intents.
 * ver.1.0.0 (2022/06/17): Initial version.
 
 ---
