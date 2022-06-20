@@ -72,7 +72,7 @@ The Japanese model has the following points to note.
 
 
 # 6. History
-* ver.1.0.0 (2022/06/**): Initial version.
+* ver.1.0.0 (2022/06/17): Initial version.
 
 ---
 
