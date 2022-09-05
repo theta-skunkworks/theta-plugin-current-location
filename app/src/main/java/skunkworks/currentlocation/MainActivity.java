@@ -70,6 +70,7 @@ public class MainActivity extends PluginActivity implements OfflineWarningDaialo
     private double savedLng;
     private double savedZoom;
     private boolean dialogEnable;
+    private boolean forcedClMode=false;
 
     private boolean gnssEnable;
 
@@ -162,13 +163,16 @@ public class MainActivity extends PluginActivity implements OfflineWarningDaialo
         geoUriEnable = setGeoUri();
 
         //オフライン、かつ、Daialg表示有効 であった場合、注意を促す。
-        if ( (!checkOnline()) && (dialogEnable) ) {
+        if ( !checkOnline() ) {
             if (geoUriEnable) {
                 //強制CLモード
                 notificationWlanCl();
+                forcedClMode = true;
             } else {
-                OfflineWarningDaialog dialog = new OfflineWarningDaialog();
-                dialog.show( getSupportFragmentManager(), "offline_warning_dialog" );
+                if (dialogEnable) {
+                    OfflineWarningDaialog dialog = new OfflineWarningDaialog();
+                    dialog.show( getSupportFragmentManager(), "offline_warning_dialog" );
+                }
             }
         }
 
@@ -189,6 +193,11 @@ public class MainActivity extends PluginActivity implements OfflineWarningDaialo
             savedLng = curGeoPoint.getLongitude();
             savedZoom = mMapView.getZoomLevelDouble();
             savePluginInfo();
+        }
+
+        if (forcedClMode){
+            //起動前の状態を保存できないため、強制offとする。
+            notificationWlanOff();
         }
 
         //THETA X needs to close WebAPI camera before finishing plugin
