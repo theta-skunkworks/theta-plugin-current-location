@@ -1,4 +1,4 @@
-# Current location
+# Current Location
 
 Version: 1.0.1
 
@@ -23,7 +23,7 @@ If the map is not displayed, please use it online.<br>
 
 > You agree to comply with all applicable export and import laws and regulations applicable to the jurisdiction in which the Software was obtained and in which it is used. Without limiting the foregoing, in connection with use of the Software, you shall not export or re-export the Software  into any U.S. embargoed countries (currently including, but necessarily limited to, Crimea  Region of Ukraine, Cuba, Iran, North Korea, Sudan and Syria) or  to anyone on the U.S. Treasury Departmentﾂ’s list of Specially Designated Nationals or the U.S. Department of Commerce Denied Personﾂ’s List or Entity List. By using the Software, you represent and warrant that you are not located in any such country or on any such list. You also agree that you will not use the Software for any purposes prohibited by any applicable laws, including, without limitation, the development, design, manufacture or production of missiles, nuclear, chemical or biological weapons.
 
-By using the Current location plug-in, you are agreeing to the above and the license terms, [LICENSE.txt](LICENSE.txt).
+By using the Current Location plug-in, you are agreeing to the above and the license terms, [LICENSE.txt](LICENSE.txt).
 
 Copyright &copy; 2022 Ricoh Company, Ltd.
 
@@ -60,7 +60,7 @@ adb reboot
 ## Other than Japanese model
 
 1. Turn on the THETA.
-2. After displaying "plug-in selection screen", tap "Current location" to start this plug-in.
+2. After displaying "plug-in selection screen", tap "Current Location" to start this plug-in.
 
 
 ## Japanese model
@@ -81,7 +81,7 @@ The calling method is based on [the calling method of the map application descri
 
 Format: `geo:[lat,lng][?param...]`
 
-`lat, lng`: Latitude and longitude including the decimal point.<br>When using "q = lat, lng", it can be set to "0,0" or omitted.
+`lat, lng`: Latitude and longitude including the decimal point. When using "q = lat, lng", it can be set to "0,0" or omitted.
 
 `param`:
  - `q = lat, lng`: Displays the map with a pin at the specified position.
@@ -91,7 +91,7 @@ Format: `geo:[lat,lng][?param...]`
 
 ## How to call the map plugin
 
-THETA Plug-in is prohibited from operating in the background by the [Plug-in Policy](https://api.ricoh/docs/theta-plugin/policy/). <br>To comply with this policy, define an onStop () method where you can call the map plugin.
+THETA Plug-in is prohibited from operating in the background by the Plug-in Policy (https://api.ricoh/docs/theta-plugin/policy/). <br>To comply with this policy, define an onStop () method where you can call the map plugin.
 
 ``` MainActivity.java
     @Override

@@ -301,7 +301,7 @@ public class MainActivity extends PluginActivity implements OfflineWarningDaialo
         boolean result = false;
         boolean foundGeoPoint = false;
 
-        //インテントフィルターテスト
+        //インテントフィルターの確認
         Intent intent = getIntent();
         Uri data = intent.getData();
         Log.d(TAG, "Uri:" + data );
