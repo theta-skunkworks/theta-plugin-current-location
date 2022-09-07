@@ -86,7 +86,7 @@ Format: `geo:[lat,lng][?param...]`
 `param`:
  - `q = lat, lng`: Displays the map with a pin at the specified position.
  - `z = zoom`: You can specify the zoom level. It can be omitted.
- - `package = packageName`: If you specify the caller's package name, you can return to the caller's MainActivity after exiting the map plugin. It can be omitted.
+ - `package = packageName`: If you specify the caller's package name, you can return to the caller's MainActivity after exiting the map plugin. It can be omitted. If you call this plug-in while the wireless LAN status is other than CL mode, the wireless LAN status will be turned off when you return.
 
 
 ## How to call the map plugin
