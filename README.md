@@ -119,7 +119,7 @@ If you call the map plugin during normal processing, the caller's onPause () wil
 
 ## Differences in behavior when launched with an implicit intent
 
-- Force the wireless LAN to CL mode (Client mode). It will remain in that state even if you exit the plug-in.
+- Force the wireless LAN to CL mode (Client mode). If you call this plug-in while the wireless LAN status is other than CL mode, the wireless LAN status will be turned off when you return.
 - Even if you move the map, you can return to the specified position by pressing the shutter button.
 - Does not save display position and zoom level when exiting.
 
