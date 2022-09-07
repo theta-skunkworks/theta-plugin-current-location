@@ -125,7 +125,7 @@ If you call the map plugin during normal processing, the caller's onPause () wil
 
 
 # 7. History
-* ver.1.0.1 (2022/06/20): Added support for implicit intents.
+* ver.1.0.1 (2022/09/07): Added support for implicit intents.
 * ver.1.0.0 (2022/06/17): Initial version.
 
 ---
