@@ -116,6 +116,7 @@ THETA Plug-in is prohibited from operating in the background by the Plug-in Poli
 
 If you call the map plugin during normal processing, the caller's onPause () will be executed and the plugin will be terminated. The map plugin will not start either.
 
+General developers of the Japanese model need to cancel the developer mode only when checking the cooperation with this plug-in.
 
 ## Differences in behavior when launched with an implicit intent
 
