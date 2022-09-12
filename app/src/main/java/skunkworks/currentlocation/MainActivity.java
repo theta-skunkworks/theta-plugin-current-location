@@ -17,10 +17,12 @@
 package skunkworks.currentlocation;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
@@ -37,8 +39,12 @@ import org.osmdroid.config.Configuration;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.CopyrightOverlay;
+import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class MainActivity extends PluginActivity implements OfflineWarningDaialog.OfflineWarningDaialogListener {
@@ -64,8 +70,15 @@ public class MainActivity extends PluginActivity implements OfflineWarningDaialo
     private double savedLng;
     private double savedZoom;
     private boolean dialogEnable;
+    private boolean forcedClMode=false;
 
     private boolean gnssEnable;
+
+    private boolean geoUriEnable;
+    private double geoUriLat;
+    private double geoUriLng;
+    private double geoUriZoom;
+    private String returnPackageName = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,15 +114,21 @@ public class MainActivity extends PluginActivity implements OfflineWarningDaialo
                     double curZoom = mMapView.getZoomLevelDouble();
                     Log.d(TAG, "Cur Zoom Level = " + curZoom);
 
-                    //測位の有効/無効により振る舞いを変える
-                    if (gnssEnable) {
-                        //現在地に戻して再フォロー
-                        mapController.animateTo(mLocationOverlay.getMyLocation());
-                        mLocationOverlay.enableFollowLocation();
+                    if (geoUriEnable) {
+                        GeoPoint centerPoint = new GeoPoint( geoUriLat, geoUriLng );
+                        //mapController.setCenter(centerPoint);
+                        mapController.animateTo(centerPoint);
                     } else {
-                        //測位を有効にするよう促すダイアログを表示
-                        skunkworks.currentlocation.PositionInfoAddOffDaialog dialog = new skunkworks.currentlocation.PositionInfoAddOffDaialog();
-                        dialog.show( getSupportFragmentManager(), "position_info_add_off_dialog" );
+                        //測位の有効/無効により振る舞いを変える
+                        if (gnssEnable) {
+                            //現在地に戻して再フォロー
+                            mapController.animateTo(mLocationOverlay.getMyLocation());
+                            mLocationOverlay.enableFollowLocation();
+                        } else {
+                            //測位を有効にするよう促すダイアログを表示
+                            skunkworks.currentlocation.PositionInfoAddOffDaialog dialog = new skunkworks.currentlocation.PositionInfoAddOffDaialog();
+                            dialog.show( getSupportFragmentManager(), "position_info_add_off_dialog" );
+                        }
                     }
 
                 }
@@ -141,10 +160,20 @@ public class MainActivity extends PluginActivity implements OfflineWarningDaialo
         restorePluginInfo();
         InitialLocationAndZoom(savedLat, savedLng, savedZoom);
 
+        geoUriEnable = setGeoUri();
+
         //オフライン、かつ、Daialg表示有効 であった場合、注意を促す。
-        if ( (!checkOnline()) && (dialogEnable) ) {
-            OfflineWarningDaialog dialog = new OfflineWarningDaialog();
-            dialog.show( getSupportFragmentManager(), "offline_warning_dialog" );
+        if ( !checkOnline() ) {
+            if (geoUriEnable) {
+                //強制CLモード
+                notificationWlanCl();
+                forcedClMode = true;
+            } else {
+                if (dialogEnable) {
+                    OfflineWarningDaialog dialog = new OfflineWarningDaialog();
+                    dialog.show( getSupportFragmentManager(), "offline_warning_dialog" );
+                }
+            }
         }
 
         if (isApConnected()) {
@@ -157,12 +186,19 @@ public class MainActivity extends PluginActivity implements OfflineWarningDaialo
         // Do end processing
         //close();
 
-        //終了時点の座標とズームレベルを保存する
-        IGeoPoint curGeoPoint = mMapView.getMapCenter();
-        savedLat = curGeoPoint.getLatitude();
-        savedLng = curGeoPoint.getLongitude();
-        savedZoom = mMapView.getZoomLevelDouble();
-        savePluginInfo();
+        if (!geoUriEnable) {
+            //終了時点の座標とズームレベルを保存する
+            IGeoPoint curGeoPoint = mMapView.getMapCenter();
+            savedLat = curGeoPoint.getLatitude();
+            savedLng = curGeoPoint.getLongitude();
+            savedZoom = mMapView.getZoomLevelDouble();
+            savePluginInfo();
+        }
+
+        if (forcedClMode){
+            //起動前の状態を保存できないため、強制offとする。
+            notificationWlanOff();
+        }
 
         //THETA X needs to close WebAPI camera before finishing plugin
         notificationWebApiCameraClose();
@@ -171,6 +207,25 @@ public class MainActivity extends PluginActivity implements OfflineWarningDaialo
         if (mMapView!=null) {
             mMapView.onPause();
         }
+    }
+
+    @Override
+    protected void onStop() {
+
+        if ( returnPackageName != null ){
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_VIEW);
+            String className = returnPackageName + ".MainActivity";
+            intent.setClassName(returnPackageName, className);
+            if ( intent.resolveActivity(getPackageManager()) != null ) {
+                Log.d(TAG, "Activity=" + intent.resolveActivity(getPackageManager()).toString() );
+                startActivity(intent);
+            } else {
+                Log.d(TAG, "No Activity");
+            }
+        }
+
+        super.onStop();
     }
 
 
@@ -237,5 +292,87 @@ public class MainActivity extends PluginActivity implements OfflineWarningDaialo
         editor.putFloat(SAVE_KEY_LAST_ZOOM, (float) savedZoom);
         editor.putBoolean(SAVE_KEY_DIALOG_ENABLE, dialogEnable);
         editor.commit();
+    }
+
+    //==============================================================
+    // インテントフィルターで起動した場合の処理
+    //==============================================================
+    boolean setGeoUri(){
+        boolean result = false;
+        boolean foundGeoPoint = false;
+
+        //インテントフィルターの確認
+        Intent intent = getIntent();
+        Uri data = intent.getData();
+        Log.d(TAG, "Uri:" + data );
+        if (data!=null) {
+            result = true;
+
+            //現在地のフォローを外す。
+            mLocationOverlay.disableFollowLocation();
+
+            Pattern pattern;
+            Matcher matcher;
+
+            //check "geo:lat,lng"
+            pattern = Pattern.compile("geo:([0-9]+.[0-9]+),([0-9]+.[0-9]+)");
+            matcher = pattern.matcher(data.toString());
+            if (matcher.find()) {
+                foundGeoPoint = true;
+                Log.d(TAG, "geo lat:" + matcher.group(1) );
+                Log.d(TAG, "geo lat:" + matcher.group(2) );
+
+                geoUriLat = Double.valueOf(matcher.group(1));
+                geoUriLng = Double.valueOf(matcher.group(2));
+
+                GeoPoint centerPoint = new GeoPoint( geoUriLat, geoUriLng );
+                mapController.setCenter(centerPoint);
+
+            }
+
+            //check "q=lat,lng"
+            pattern = Pattern.compile("q=([0-9]+.[0-9]+),([0-9]+.[0-9]+)");
+            matcher = pattern.matcher(data.toString());
+            if (matcher.find()) {
+                foundGeoPoint = true;
+                Log.d(TAG, "pin lat:" + matcher.group(1) );
+                Log.d(TAG, "pin lat:" + matcher.group(2) );
+
+                geoUriLat = Double.valueOf(matcher.group(1));
+                geoUriLng = Double.valueOf(matcher.group(2));
+
+                GeoPoint centerPoint = new GeoPoint( geoUriLat, geoUriLng );
+                // マーカーをオーバーレイ
+                Marker marker = new Marker(mMapView);
+                marker.setPosition(centerPoint);
+                marker.setInfoWindow(null);//マーカークリック時の吹き出し無効
+                mMapView.getOverlays().add(marker);
+                // 指定座標を表示する
+                mapController.animateTo(centerPoint);
+            }
+            //check "z=zoomlevel"
+            if (foundGeoPoint) {
+                pattern = Pattern.compile("\\?z=([0-9]+.[0-9]+|[0-9]+)");
+                matcher = pattern.matcher(data.toString());
+                if (matcher.find()) {
+                    Log.d(TAG, "zoom:" + matcher.group(1) );
+                    geoUriZoom = Double.valueOf(matcher.group(1));
+                    mapController.setZoom(geoUriZoom);
+                }
+            } else {
+                geoUriLat = savedLat;
+                geoUriLng = savedLng;
+            }
+
+            //check returnPackageName
+            pattern = Pattern.compile("\\?package=([a-z0-9.]+)");
+            matcher = pattern.matcher(data.toString());
+            if (matcher.find()) {
+                returnPackageName = matcher.group(1);
+                Log.d(TAG, "package:" + returnPackageName );
+            }
+
+        }
+        return result;
     }
 }
