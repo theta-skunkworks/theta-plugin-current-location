@@ -1,10 +1,13 @@
 # Current Location
 
-Version: 1.0.1
+より詳しい日本語の説明は[こちら](https://qiita.com/KA-2/items/記事公開後更新予定)。<br>
+[Click here](https://qiita.com/KA-2/items/記事公開後更新予定) for a more detailed explanation in Japanese.
 
 # 1. Overview
 
 This plugin uses "[osmdroid](https://github.com/osmdroid/osmdroid)" to display your location in the map data provided by "[Open Street Map](https://www.openstreetmap.org/copyright/)".
+
+![screenshot](./img/screenshot.png)
 
 You can display a map of any point by dragging the screen.
 
