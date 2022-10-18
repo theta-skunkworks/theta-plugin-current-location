@@ -331,7 +331,7 @@ public class MainActivity extends PluginActivity implements OfflineWarningDaialo
             }
 
             //check "q=lat,lng"
-            pattern = Pattern.compile("q=([0-9]+.[0-9]+),([0-9]+.[0-9]+)");
+            pattern = Pattern.compile("[\\?|\\&]q=([0-9]+.[0-9]+),([0-9]+.[0-9]+)");
             matcher = pattern.matcher(data.toString());
             if (matcher.find()) {
                 foundGeoPoint = true;
@@ -352,7 +352,7 @@ public class MainActivity extends PluginActivity implements OfflineWarningDaialo
             }
             //check "z=zoomlevel"
             if (foundGeoPoint) {
-                pattern = Pattern.compile("\\?z=([0-9]+.[0-9]+|[0-9]+)");
+                pattern = Pattern.compile("[\\?|\\&]z=([0-9]+.[0-9]+|[0-9]+)");
                 matcher = pattern.matcher(data.toString());
                 if (matcher.find()) {
                     Log.d(TAG, "zoom:" + matcher.group(1) );
@@ -365,7 +365,7 @@ public class MainActivity extends PluginActivity implements OfflineWarningDaialo
             }
 
             //check returnPackageName
-            pattern = Pattern.compile("\\?package=([a-z0-9.]+)");
+            pattern = Pattern.compile("[\\?|\\&]package=([a-z0-9.]+)");
             matcher = pattern.matcher(data.toString());
             if (matcher.find()) {
                 returnPackageName = matcher.group(1);
