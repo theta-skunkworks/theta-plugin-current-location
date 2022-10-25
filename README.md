@@ -1,7 +1,7 @@
 # Current Location
 
-より詳しい日本語の説明は[こちら](https://qiita.com/KA-2/items/記事公開後更新予定)。<br>
-[Click here](https://qiita.com/KA-2/items/記事公開後更新予定) for a more detailed explanation in Japanese.
+より詳しい日本語の説明は[こちら](https://qiita.com/KA-2/items/ab2508c268967c1104bb)。<br>
+[Click here](https://qiita.com/KA-2/items/ab2508c268967c1104bb) for a more detailed explanation in Japanese.
 
 # 1. Overview
 
