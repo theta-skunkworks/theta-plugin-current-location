@@ -1,7 +1,7 @@
 # Current Location
 
-より詳しい日本語の説明は[こちら](https://qiita.com/KA-2/items/ab2508c268967c1104bb)。<br>
-[Click here](https://qiita.com/KA-2/items/ab2508c268967c1104bb) for a more detailed explanation in Japanese.
+より詳しい日本語の説明は[こちら](https://qiita.com/KA-2/items/記事公開後更新予定)。<br>
+[Click here](https://qiita.com/KA-2/items/記事公開後更新予定) for a more detailed explanation in Japanese.
 
 # 1. Overview
 
@@ -94,7 +94,7 @@ Format: `geo:[lat,lng][?param...]`
 
 ## How to call the map plugin
 
-THETA Plug-in is prohibited from operating in the background by the Plug-in Policy (https://api.ricoh/docs/theta-plugin/policy/). <br>To comply with this policy, define an onStop () method where you can call the map plugin.
+THETA Plug-in is prohibited from operating in the background by the Plug-in Policy (https://github.com/ricohapi/theta-api-specs/blob/main/ricoh-theta-plugin/policy.md). <br>To comply with this policy, define an onStop () method where you can call the map plugin.
 
 ``` MainActivity.java
     @Override
